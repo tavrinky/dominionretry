@@ -13,7 +13,9 @@ class Game(object):
             Estate, 
             Duchy, 
             Province, 
-            Copper, 
+            Copper,
+            Silver, 
+            Gold, 
             Village,
             Curse,
 
@@ -102,7 +104,10 @@ class Game(object):
         currentIndex = players.index(self.currentPlayer) 
         self.currentPlayer = players[currentIndex % len(players)] 
 
-
+    def printSupply(self): 
+        for pile in self.supply: 
+            if pile: 
+                print(f"{len(pile)} {str(pile[0])}s")
         
 # basically just a glorified tuple 
 class PlayerVisibleGame(object): 

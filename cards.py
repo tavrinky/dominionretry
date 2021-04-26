@@ -24,6 +24,22 @@ class Copper(Money):
     def setupSupply(self, numPlayers): 
         return [Copper() for _ in range(60-(7*numPlayers))] 
 
+class Silver(Money): 
+    def __init__(self): 
+        super().__init__(3, 2) 
+    
+    def setupSupply(self, _):
+        return [Silver() for _ in range(40)] 
+
+class Gold(Money): 
+    def __init__(self): 
+        super().__init__(6, 3) 
+
+    def setupSupply(self, _): 
+        return [Gold() for _ in range(30)] 
+
+
+
 
 class Victory(Card): 
     def __init__(self, cost, vp): 

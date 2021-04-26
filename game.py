@@ -2,10 +2,11 @@ from random import shuffle, choice
 
 from player import Player 
 from cards import * 
+from utils import random_string
 
 class Game(object):
     def __init__(self, numplayers=2): 
-        players = [Player() for _ in range(numplayers)]
+        players = [Player(str(i)) for i in range(numplayers)]
         self.trash = [] 
         self.supply = [] 
         self.playermanagers = [PlayerManager(player) for player in players] 

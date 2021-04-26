@@ -3,8 +3,8 @@ from random import choice
 from cards import * 
 
 class Player(object): 
-    def __init__(self): 
-        pass 
+    def __init__(self, name): 
+        self.name 
     
     def pickAction(self, g, pm): 
         print(f"Turn {g.turns}")

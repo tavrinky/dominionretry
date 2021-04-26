@@ -90,10 +90,18 @@ class Game(object):
                 raise ValueError("Tried to buy card that costs too much, money: {self.currentPM.money}, {cardToBuy}") 
 
     def cleanUp(self): 
-        raise NotImplementedError() 
+        for card in self.currentPM.hand: 
+            self.currentPM.discardCard(card) 
+        self.currentPM.drawN(5) 
 
     def incrementPlayer(self): 
-        raise NotImplementedError() 
+        # assumptions: every player has a player manager
+        # every player manager has a player 
+        # I think this works if you have [p1, p2] and [pm2, pm1] where pmn.player = pn 
+        players = [pm.player for pm in self.playermanagers]  
+        currentIndex = players.index(self.currentPlayer) 
+        self.currentPlayer = players[currentIndex % len(players)] 
+
 
         
 # basically just a glorified tuple 
@@ -105,7 +113,7 @@ class PlayerVisibleGame(object):
         self.turns = turns 
 
 def viewGame(g): 
-    return PlayerVisibleGame(trash=g.trash[:], supply=g.supply[:], turns=g.turns)
+    return PlayerVisibleGame(trash=g.trash[:], supply=g.supply[:][:], turns=g.turns)
     
 class PlayerManager(object): 
     def __init__(self, player): 
@@ -128,7 +136,7 @@ class PlayerManager(object):
             self.hand.append(self.deck.pop(0)) 
         else: 
             self.deck = self.discard 
-            shuffle(deck) 
+            shuffle(self.deck) 
             self.discard = [] 
 
     

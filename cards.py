@@ -38,9 +38,6 @@ class Gold(Money):
     def setupSupply(self, _): 
         return [Gold() for _ in range(30)] 
 
-
-
-
 class Victory(Card): 
     def __init__(self, cost, vp): 
         super().__init__(cost) 
@@ -89,6 +86,9 @@ class Smithy(Action):
 
     def run(self, g): 
         g.currentPM.drawN(3) 
+
+
+
 
 class Curse(Card): 
     def __init__(self): 

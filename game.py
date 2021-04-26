@@ -3,6 +3,7 @@ from random import shuffle, choice
 from player import Player 
 from cards import * 
 from utils import random_string
+from log import PrintLog
 
 class Game(object):
     def __init__(self, numplayers=2): 
@@ -19,15 +20,19 @@ class Game(object):
             Gold, 
             Village,
             Curse,
-
         ]
+
+        self.log = PrintLog() 
         self.setupSupply(*cardsInSupply)
         
         [pm.setup() for pm in self.playermanagers]   
-        self.turns = 0 
-        self.currentPlayer = choice(list(map(lambda x: x.player, self.playermanagers)))
+        self.turn = 0 
+        self.currentPlayer = [pm.player for pm in self.playermanagers][0]
+
+        
 
     def setupSupply(self, *cards):
+        self.log.log("Setting up")
         numPlayers = len(self.playermanagers)
         for card in cards: 
             self.supply.append(card().setupSupply(numPlayers))
@@ -45,10 +50,14 @@ class Game(object):
                 return pile 
 
     def run(self): 
+        self.log.log(f"Beginning turn {self.turn}, {self.currentPlayer.name}'s turn")
         while not self.isWon(): 
-            self.currentPM.actions, self.currentPM.buys = 1,1  
+            self.currentPM.actions, self.currentPM.buys = 1,1 
+            self.log.log("Beginning actions") 
             self.runActions() 
+            self.log.log("Beginning buys") 
             self.runBuys()
+            self.log.log("Cleaning up")
             self.cleanUp() 
             self.incrementPlayer() 
 
@@ -85,7 +94,8 @@ class Game(object):
                 raise ValueError("Bad and naughty player, playing treasures you don't have!\nHand: {self.currentPM.hand}, treasure: {treasure}")
         while self.currentPM.buys > 0: 
             cardToBuy = self.currentPlayer.pickCardToBuy(viewGame(self), viewPM(self.currentPM)) 
-            if cardToBuy and cardToBuy <= self.currentPM.money: 
+            if cardToBuy and cardToBuy.cost <= self.currentPM.money: 
+                self.currentPM.buys -= 1 
                 self.currentPM.discard.append(self.getSupplyByName(cardToBuy.__class__).pop(0))
             elif not cardToBuy: 
                 break 
@@ -101,8 +111,10 @@ class Game(object):
         # assumptions: every player has a player manager
         # every player manager has a player 
         # I think this works if you have [p1, p2] and [pm2, pm1] where pmn.player = pn 
+        print("is this reached?")
         players = [pm.player for pm in self.playermanagers]  
         currentIndex = players.index(self.currentPlayer) 
+        currentIndex += 1 
         self.currentPlayer = players[currentIndex % len(players)] 
 
     def printSupply(self): 
@@ -112,14 +124,14 @@ class Game(object):
         
 # basically just a glorified tuple 
 class PlayerVisibleGame(object): 
-    def __init__(self, trash, supply, turns): 
+    def __init__(self, trash, supply, turn): 
         print(trash)
         self.trash = trash
         self.supply = supply 
-        self.turns = turns 
+        self.turn = turn
 
 def viewGame(g): 
-    return PlayerVisibleGame(trash=g.trash[:], supply=g.supply[:][:], turns=g.turns)
+    return PlayerVisibleGame(trash=g.trash[:], supply=g.supply[:][:], turn=g.turn)
     
 class PlayerManager(object): 
     def __init__(self, player): 

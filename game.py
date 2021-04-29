@@ -52,14 +52,20 @@ class Game(object):
     def run(self): 
         self.log.log(f"Beginning turn {self.turn}, {self.currentPlayer.name}'s turn")
         while not self.isWon(): 
-            self.currentPM.actions, self.currentPM.buys = 1,1 
-            self.log.log("Beginning actions") 
-            self.runActions() 
-            self.log.log("Beginning buys") 
-            self.runBuys()
-            self.log.log("Cleaning up")
-            self.cleanUp() 
-            self.incrementPlayer() 
+            self.stepTurn()
+
+    def stepTurn(self): 
+        for pm in self.playermanagers: 
+            assert(len(pm.hand)==5 )
+        self.currentPM.actions, self.currentPM.buys = 1,1 
+        self.currentPM.money = 0 
+        self.log.log("Beginning actions") 
+        self.runActions() 
+        self.log.log("Beginning buys") 
+        self.runBuys()
+        self.log.log("Cleaning up")
+        self.cleanUp() 
+        self.incrementPlayer() 
 
     def isWon(self): 
         return self.threePiled() or self.provincesEmpty() 
@@ -86,8 +92,9 @@ class Game(object):
 
     def runBuys(self):
         treasures = self.currentPlayer.playTreasures(viewGame(self), viewPM(self.currentPM))
-        for treasure in treasures: 
-            if treasure in self.currentPM.hand and isinstance(treasure, Money): 
+        deepHand = self.currentPM.hand[:]
+        for treasure in treasures:      
+            if treasure in deepHand and isinstance(treasure, Money): 
                 self.currentPM.discardCard(treasure) 
                 self.currentPM.money += treasure.value 
             else: 
@@ -103,15 +110,14 @@ class Game(object):
                 raise ValueError("Tried to buy card that costs too much, money: {self.currentPM.money}, {cardToBuy}") 
 
     def cleanUp(self): 
-        for card in self.currentPM.hand: 
-            self.currentPM.discardCard(card) 
+        self.currentPM.discardHand() 
         self.currentPM.drawN(5) 
+        assert(len(self.currentPM.hand) == 5 )
 
     def incrementPlayer(self): 
         # assumptions: every player has a player manager
         # every player manager has a player 
         # I think this works if you have [p1, p2] and [pm2, pm1] where pmn.player = pn 
-        print("is this reached?")
         players = [pm.player for pm in self.playermanagers]  
         currentIndex = players.index(self.currentPlayer) 
         currentIndex += 1 
@@ -120,7 +126,7 @@ class Game(object):
     def printSupply(self): 
         for pile in self.supply: 
             if pile: 
-                print(f"{len(pile)} {str(pile[0])}s")
+                self.log.log(f"{len(pile)} {str(pile[0])}s")
         
 # basically just a glorified tuple 
 class PlayerVisibleGame(object): 
@@ -149,14 +155,19 @@ class PlayerManager(object):
         shuffle(self.deck) 
         self.drawN(5)
 
+    def discardHand(self): 
+        self.discard += self.hand 
+        self.hand = [] 
+
     def draw(self): 
         if self.deck: 
             self.hand.append(self.deck.pop(0)) 
         else: 
-            self.deck = self.discard 
+            self.deck = self.discard[:]
             shuffle(self.deck) 
             self.discard = [] 
-
+            self.hand.append(self.deck.pop(0))
+            
     
     def drawN(self, n): 
         [self.draw() for _ in range(n)]
@@ -169,7 +180,8 @@ class PlayerManager(object):
             pass 
 
     def discardCard(self, card): 
-        self.hand.remove(card) 
+        self.hand.remove(card)
+        self.discard.append(card) 
 
     
 class ViewablePlayerManager(object):
@@ -192,3 +204,7 @@ def viewPM(pm):
         "hand": pm.hand,
     }
     return ViewablePlayerManager(**pmDict)
+
+if __name__ == "__main__": 
+    game = Game()
+    game.run()

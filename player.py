@@ -26,7 +26,10 @@ class Player(object):
          
         cards = [card for card in supplyCardsByCost if card.cost <= pm.money] 
         if cards: 
-            return max(cards, key=lambda x: x.cost)
+            
+            card = max(cards, key=lambda x: x.cost)
+            print(card)
+            return card 
         else: 
             return None 
         

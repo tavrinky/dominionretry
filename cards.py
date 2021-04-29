@@ -87,9 +87,6 @@ class Smithy(Action):
     def run(self, g): 
         g.currentPM.drawN(3) 
 
-
-
-
 class Curse(Card): 
     def __init__(self): 
         super().__init__(0)

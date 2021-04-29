@@ -92,9 +92,9 @@ class Game(object):
 
     def runBuys(self):
         treasures = self.currentPlayer.playTreasures(viewGame(self), viewPM(self.currentPM))
-        deepHand = self.currentPM.hand[:]
+        
         for treasure in treasures:      
-            if treasure in deepHand and isinstance(treasure, Money): 
+            if treasure in self.currentPM.hand and isinstance(treasure, Money): 
                 self.currentPM.discardCard(treasure) 
                 self.currentPM.money += treasure.value 
             else: 

@@ -87,12 +87,27 @@ class Smithy(Action):
     def run(self, g): 
         g.currentPM.drawN(3) 
 
+class Chapel(Action): 
+    def __init__(self): 
+        super().__init__(2) 
+
+    def run(self, g): 
+        cardsToTrash = g.currentPlayer.chapel(g.viewGame(), g.currentPM.viewPM()) 
+        for card in cardsToTrash: 
+            if card not in g.currentPM.hand: 
+                raise ValueError("Tried to trash card not in hand!")
+            else: 
+                g.currentPM.hand.remove(card) 
+                g.trashCard(card) 
+
 class Curse(Card): 
     def __init__(self): 
         super().__init__(0)
 
     def setupSupply(self, _): 
         return [self.__class__() for _ in range(10)] 
+
+
 
 
 

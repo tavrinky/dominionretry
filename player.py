@@ -19,18 +19,18 @@ class Player(object):
         return treasures 
 
     def pickCardToBuy(self, g, pm): 
-        
         supplyCards = g.supply 
         supplyCardsByCost = [pile[0] for pile in supplyCards if pile] 
         # cursed 
-         
         cards = [card for card in supplyCardsByCost if card.cost <= pm.money] 
         if cards: 
-            
             card = max(cards, key=lambda x: x.cost)
             print(card)
             return card 
         else: 
             return None 
+
+    def chapel(self, g, pm): 
+        return [x for x in pm.hand if isinstance(x, Estate)]
         
         

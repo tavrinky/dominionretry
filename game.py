@@ -55,8 +55,6 @@ class Game(object):
             self.stepTurn()
 
     def stepTurn(self): 
-        for pm in self.playermanagers: 
-            assert(len(pm.hand)==5 )
         self.currentPM.actions, self.currentPM.buys = 1,1 
         self.currentPM.money = 0 
         self.log.log("Beginning actions") 
@@ -127,6 +125,15 @@ class Game(object):
         for pile in self.supply: 
             if pile: 
                 self.log.log(f"{len(pile)} {str(pile[0])}s")
+
+    def trashCard(self, card): 
+        self.trash.append(card)
+
+    # put here so that i don't need to import it into cards 
+    def viewGame(self): 
+        return viewGame(self) 
+        
+            
         
 # basically just a glorified tuple 
 class PlayerVisibleGame(object): 
@@ -183,6 +190,12 @@ class PlayerManager(object):
         self.hand.remove(card)
         self.discard.append(card) 
 
+    def viewPM(self): 
+        return viewPM(self)  
+
+
+
+
     
 class ViewablePlayerManager(object):
     def __init__(self, actions, money, buys, deck, discard, hand): 
@@ -207,4 +220,5 @@ def viewPM(pm):
 
 if __name__ == "__main__": 
     game = Game()
+    game.currentPM.hand.append(Chapel()) 
     game.run()

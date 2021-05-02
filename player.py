@@ -35,5 +35,11 @@ class Player(object):
 
     def cellar(self, g, pm): 
         return [x for x in pm.hand if isinstance(x, Victory)]
+
+    def harbinger(self, g, pm): 
+        if pm.discard: 
+            return max(pm.discard, key=lambda x: x.cost) 
+        else: 
+            return None 
         
         

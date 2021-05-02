@@ -113,6 +113,26 @@ class Cellar(Action):
                 g.currentPM.discardCard(card) 
                 g.currentPM.draw() 
 
+# skipping moat because what the fuck is a reaction 
+
+class Harbinger(Action): 
+    def __init__(self): 
+        super().__init__(3) 
+
+    def run(self, g): 
+        g.currentPM.draw() 
+        g.currentPM.actions += 1 
+        cardToHarbinger = g.currentPlayer.harbinger(g.viewGame(), g.currentPM.viewPM()) 
+        if g.currentPM.discard: 
+            if cardToHarbinger in g.currentPM.discard: 
+                g.currentPM.discard.remove(card) 
+                g.currentPM.hand.append(card) 
+            else: 
+                return ValueError(f"Tried to harbinger card not in discard: Card {Card}, hand: {g.currentPM.hand}")  
+        else: 
+            pass
+
+
 
 class Curse(Card): 
     def __init__(self): 

@@ -92,7 +92,6 @@ class Game(object):
 
     def runBuys(self):
         treasures = self.currentPlayer.playTreasures(viewGame(self), viewPM(self.currentPM))
-        
         for treasure in treasures:      
             if treasure in self.currentPM.hand and isinstance(treasure, Money): 
                 self.currentPM.hand.remove(treasure)  

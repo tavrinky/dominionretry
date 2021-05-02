@@ -25,6 +25,8 @@ class Game(object):
 
         self.log = PrintLog() 
         self.setupSupply(*cardsInSupply)
+
+        self.onPlayTreasureHandlers = [] 
         
         [pm.setup() for pm in self.playermanagers]   
         self.turn = 0 
@@ -97,6 +99,8 @@ class Game(object):
                 self.currentPM.hand.remove(treasure)  
                 self.inPlay.append(treasure) 
                 self.currentPM.money += treasure.value 
+                for h in self.onPlayTreasureHandlers: 
+                    h(self, treasure)
             else: 
                 raise ValueError("Bad and naughty player, playing treasures you don't have!\nHand: {self.currentPM.hand}, treasure: {treasure}")
         while self.currentPM.buys > 0: 
@@ -109,6 +113,7 @@ class Game(object):
                 break 
             else: 
                 raise ValueError("Tried to buy card that costs too much, money: {self.currentPM.money}, {cardToBuy}") 
+        self.onPlayTreasureHandlers = [] 
 
     def cleanUp(self): 
         self.currentPM.discardHand() 
@@ -138,6 +143,9 @@ class Game(object):
     # put here so that i don't need to import it into cards 
     def viewGame(self): 
         return viewGame(self) 
+
+    def attachOnPlayTreasureHandler(self, handler): 
+        self.onPlayTreasureHandlers.append(handler) 
         
             
         

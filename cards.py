@@ -1,4 +1,6 @@
 
+from utils import * 
+
 class Card(object): 
     def __init__(self, cost): 
         self.cost = cost
@@ -132,6 +134,20 @@ class Harbinger(Action):
         else: 
             pass
 
+
+class Merchant(Action): 
+    def __init__(self): 
+        super().__init__(3) 
+
+    def run(self, g): 
+        def merchantBuyHandler(g, card, t=Triggered()): 
+            if not t.triggered and isinstance(card, Silver): 
+                g.currentPM.money+=1 
+                t.trigger() 
+            
+        g.currentPM.draw() 
+        g.currentPM.actions += 1 
+        g.attachOnPlayTreasureHandler(merchantBuyHandler)
 
 
 class Curse(Card): 

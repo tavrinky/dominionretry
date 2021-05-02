@@ -125,8 +125,8 @@ class Harbinger(Action):
         cardToHarbinger = g.currentPlayer.harbinger(g.viewGame(), g.currentPM.viewPM()) 
         if g.currentPM.discard: 
             if cardToHarbinger in g.currentPM.discard: 
-                g.currentPM.discard.remove(card) 
-                g.currentPM.hand.append(card) 
+                g.currentPM.discard.remove(cardToHarbinger) 
+                g.currentPM.hand.append(cardToHarbinger) 
             else: 
                 return ValueError(f"Tried to harbinger card not in discard: Card {Card}, hand: {g.currentPM.hand}")  
         else: 

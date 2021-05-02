@@ -95,10 +95,24 @@ class Chapel(Action):
         cardsToTrash = g.currentPlayer.chapel(g.viewGame(), g.currentPM.viewPM()) 
         for card in cardsToTrash: 
             if card not in g.currentPM.hand: 
-                raise ValueError("Tried to trash card not in hand!")
+                raise ValueError(f"Tried to trash card not in hand! Card: {card}, hand: {g.currentPM.hand}") 
             else: 
                 g.currentPM.hand.remove(card) 
                 g.trashCard(card) 
+
+class Cellar(Action): 
+    def __init__(self): 
+        super().__init__(2) 
+
+    def run(self, g): 
+        cardsToCellar = g.currentPlayer.cellar(g.viewGame(), g.currentPM.viewPM()) 
+        for card in cardsToCellar: 
+            if card not in g.currentPM.hand: 
+                raise ValueError(f"Tried to cellar card not in hand! Card: {card}, hand: {g.currentPM.hand}") 
+            else: 
+                g.currentPM.discardCard(card) 
+                g.currentPM.draw() 
+
 
 class Curse(Card): 
     def __init__(self): 

@@ -32,5 +32,8 @@ class Player(object):
 
     def chapel(self, g, pm): 
         return [x for x in pm.hand if isinstance(x, Estate)]
+
+    def cellar(self, g, pm): 
+        return [x for x in pm.hand if isinstance(x, Victory)]
         
         

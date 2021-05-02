@@ -10,6 +10,7 @@ class Game(object):
         players = [Player(str(i)) for i in range(numplayers)]
         self.trash = [] 
         self.supply = [] 
+        self.inPlay = [] 
         self.playermanagers = [PlayerManager(player) for player in players] 
         cardsInSupply = [ 
             Estate, 
@@ -82,7 +83,8 @@ class Game(object):
         while self.currentPM.actions > 0:  
             action = self.currentPlayer.pickAction(viewGame(self), viewPM(self.currentPM)) 
             if action in self.currentPM.hand: 
-                self.currentPM.discardCard(action) 
+                self.currentPM.hand.remove(action) 
+                self.inPlay.append(action) 
                 self.currentPM.actions -= 1 
                 action.run(self) 
             if not action: 
@@ -93,7 +95,8 @@ class Game(object):
         
         for treasure in treasures:      
             if treasure in self.currentPM.hand and isinstance(treasure, Money): 
-                self.currentPM.discardCard(treasure) 
+                self.currentPM.hand.remove(treasure)  
+                self.inPlay.append(treasure) 
                 self.currentPM.money += treasure.value 
             else: 
                 raise ValueError("Bad and naughty player, playing treasures you don't have!\nHand: {self.currentPM.hand}, treasure: {treasure}")
@@ -101,6 +104,7 @@ class Game(object):
             cardToBuy = self.currentPlayer.pickCardToBuy(viewGame(self), viewPM(self.currentPM)) 
             if cardToBuy and cardToBuy.cost <= self.currentPM.money: 
                 self.currentPM.buys -= 1 
+                self.currentPM.money -= cardToBuy 
                 self.currentPM.discard.append(self.getSupplyByName(cardToBuy.__class__).pop(0))
             elif not cardToBuy: 
                 break 
@@ -109,8 +113,11 @@ class Game(object):
 
     def cleanUp(self): 
         self.currentPM.discardHand() 
+        self.currentPM.discard.extend(self.inPlay) 
+        self.inPlay = [] 
         self.currentPM.drawN(5) 
         assert(len(self.currentPM.hand) == 5 )
+
 
     def incrementPlayer(self): 
         # assumptions: every player has a player manager

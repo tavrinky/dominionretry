@@ -44,5 +44,8 @@ class Player(object):
 
     def vassal(self, g, pm, card): 
         return True 
+
+    def workshop(self, g, pm): 
+        return Silver() 
         
         

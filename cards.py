@@ -162,6 +162,18 @@ class Vassal(Action):
         else: 
             g.currentPM.discard.append(cardToVassal)
 
+class Workshop(Action): 
+    def __init__(self): 
+        super().__init__(3)
+
+    def run(self, g): 
+        cardToWorkshop = g.currentPlayer.workshop(g.viewGame(), g.currentPM.viewPM()) 
+        pile = g.getSupplyByName(cardToWorkshop.__class__)
+        if pile: 
+            g.currentPM.discard.append(pile.pop(0)) 
+            
+
+
 class Curse(Card): 
     def __init__(self): 
         super().__init__(0)

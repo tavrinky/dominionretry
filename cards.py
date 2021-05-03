@@ -149,6 +149,18 @@ class Merchant(Action):
         g.currentPM.actions += 1 
         g.attachOnPlayTreasureHandler(merchantBuyHandler)
 
+class Vassal(Action): 
+    def __init__(self): 
+        super().__init__(3) 
+
+    def run(self, g): 
+        g.currentPM.money += 2 
+        cardToVassal = g.currentPM.deck.pop(0) 
+        if isinstance(cardToVassal, Action) and g.currentPlayer.vassal(g.viewGame(), g.currentPM.viewPM(), cardToVassal): 
+            g.inPlay.append(cardToVassal) 
+            cardToVassal.run(g)
+        else: 
+            g.currentPM.discard.append(cardToVassal)
 
 class Curse(Card): 
     def __init__(self): 

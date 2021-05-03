@@ -41,5 +41,8 @@ class Player(object):
             return max(pm.discard, key=lambda x: x.cost) 
         else: 
             return None 
+
+    def vassal(self, g, pm, card): 
+        return True 
         
         

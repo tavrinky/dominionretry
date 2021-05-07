@@ -47,5 +47,12 @@ class Player(object):
 
     def workshop(self, g, pm): 
         return Silver() 
+
+    def revealed(self, g, cards, message): 
+        pass 
+
+    def respondToBureaucrat(self, g, pm, cards): 
+        if cards: 
+            return cards[0] 
         
         

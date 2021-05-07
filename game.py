@@ -89,6 +89,8 @@ class Game(object):
                 self.inPlay.append(action) 
                 self.currentPM.actions -= 1 
                 action.run(self) 
+                if isinstance(action, Attack): 
+                    action.attack(self) 
             if not action: 
                 break 
 
@@ -146,6 +148,10 @@ class Game(object):
 
     def attachOnPlayTreasureHandler(self, handler): 
         self.onPlayTreasureHandlers.append(handler) 
+
+    def reveal(self, cards, message): 
+        for player in map(lambda pm: pm.player, self.playermanagers): 
+            player.revealed(self.viewGame(), cards, message)
         
             
         

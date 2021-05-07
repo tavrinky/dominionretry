@@ -74,6 +74,13 @@ class Action(Card):
     def setupSupply(self, _): 
         return [self.__class__() for _ in range(10)] 
 
+class Attack(Action):
+    def __init__(self, cost): 
+        super().__init__(cost) 
+
+    def run(self, g): 
+        return NotImplementedError
+
 class Village(Action): 
     def __init__(self): 
         super().__init__(3) 
@@ -161,7 +168,7 @@ class Vassal(Action):
             cardToVassal.run(g)
         else: 
             g.currentPM.discard.append(cardToVassal)
-
+            
 class Workshop(Action): 
     def __init__(self): 
         super().__init__(3)
@@ -171,7 +178,33 @@ class Workshop(Action):
         pile = g.getSupplyByName(cardToWorkshop.__class__)
         if pile: 
             g.currentPM.discard.append(pile.pop(0)) 
-            
+
+class Bureaucrat(Attack): 
+    def __init__(self): 
+        super().__init__(3) 
+
+    def run(self, g): 
+        try:
+            g.currentPM.discard.append(g.getSupplyByName(Silver).pop(0))
+        except IndexError: 
+            pass 
+    
+    def attack(self, g): 
+        for pm in g.playermanagers: 
+            if pm /= g.currentPM: 
+                victoriesInHand = list(filter(lambda x: isinstance(x, Victory), pm.hand)) 
+                if victoriesInHand: 
+                    topdeck = pm.player.respondToBureaucrat(g.viewGame(), pm.viewPM(), victoriesInHand) 
+                    if topdeck in victoriesInHand: 
+                        g.reveal(topdeck, str(player.name)) 
+                        pm.deck.insert(0, topdeck) 
+                        pm.hand.remove(topdeck) 
+                    else: 
+                        raise ValueError(f"Improper response to bureaucrat, topdeck card not in hand, {card}, {pm.player.name}")
+                else: 
+                    g.reveal(pm.hand[:], str(player.name))
+
+
 
 
 class Curse(Card): 

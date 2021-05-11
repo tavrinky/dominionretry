@@ -196,13 +196,13 @@ class Bureaucrat(Attack):
                 if victoriesInHand: 
                     topdeck = pm.player.respondToBureaucrat(g.viewGame(), pm.viewPM(), victoriesInHand) 
                     if topdeck in victoriesInHand: 
-                        g.reveal(topdeck, str(player.name)) 
+                        g.reveal(topdeck, str(pm.player.name)) 
                         pm.deck.insert(0, topdeck) 
                         pm.hand.remove(topdeck) 
                     else: 
-                        raise ValueError(f"Improper response to bureaucrat, topdeck card not in hand, {card}, {pm.player.name}")
+                        raise ValueError(f"Improper response to bureaucrat, topdeck card not in hand, {topdeck}, {pm.player.name}")
                 else: 
-                    g.reveal(pm.hands[:], str(player.name))
+                    g.reveal(pm.hands[:], str(pm.player.name))
 
 
 

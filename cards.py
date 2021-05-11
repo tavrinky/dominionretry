@@ -191,7 +191,7 @@ class Bureaucrat(Attack):
     
     def attack(self, g): 
         for pm in g.playermanagers: 
-            if pm /= g.currentPM: 
+            if pm != g.currentPM: 
                 victoriesInHand = list(filter(lambda x: isinstance(x, Victory), pm.hand)) 
                 if victoriesInHand: 
                     topdeck = pm.player.respondToBureaucrat(g.viewGame(), pm.viewPM(), victoriesInHand) 
@@ -202,7 +202,7 @@ class Bureaucrat(Attack):
                     else: 
                         raise ValueError(f"Improper response to bureaucrat, topdeck card not in hand, {card}, {pm.player.name}")
                 else: 
-                    g.reveal(pm.hand[:], str(player.name))
+                    g.reveal(pm.hands[:], str(player.name))
 
 
 

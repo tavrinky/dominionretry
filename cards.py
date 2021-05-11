@@ -1,21 +1,23 @@
 
 from utils import * 
+from typing import Callable, List, TYPE_CHECKING
+
 
 class Card(object): 
-    def __init__(self, cost): 
+    def __init__(self, cost: int): 
         self.cost = cost
 
-    def __eq__(self, other): 
+    def __eq__(self, other: object) -> bool: 
         return self.__class__ == other.__class__ 
 
-    def __str__(self):
+    def __str__(self) -> str:
         return super().__str__().split(".")[1].split(" ")[0]
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(str(self))
 
 class Money(Card): 
-    def __init__(self, cost, value): 
+    def __init__(self, cost: int, value: int): 
         super().__init__(cost) 
         self.value = value 
 
@@ -23,21 +25,21 @@ class Copper(Money):
     def __init__(self): 
         super().__init__(0, 1) 
 
-    def setupSupply(self, numPlayers): 
+    def setupSupply(self, numPlayers: int) -> List[Card]: 
         return [Copper() for _ in range(60-(7*numPlayers))] 
 
 class Silver(Money): 
     def __init__(self): 
         super().__init__(3, 2) 
     
-    def setupSupply(self, _):
+    def setupSupply(self, _) -> List[Card]:
         return [Silver() for _ in range(40)] 
 
 class Gold(Money): 
     def __init__(self): 
         super().__init__(6, 3) 
 
-    def setupSupply(self, _): 
+    def setupSupply(self, _) -> List[Card]: 
         return [Gold() for _ in range(30)] 
 
 class Victory(Card): 
@@ -48,7 +50,7 @@ class Victory(Card):
     def getVP(self, game): 
         return self.vp(game) 
 
-    def setupSupply(self, numPlayers): 
+    def setupSupply(self, numPlayers: int) -> List[Card]: 
         if numPlayers < 3: 
             numCards = 8 
         else: 
@@ -71,7 +73,7 @@ class Action(Card):
     def __init__(self, cost): 
         super().__init__(cost) 
 
-    def setupSupply(self, _): 
+    def setupSupply(self, _) -> List[Card]: 
         return [self.__class__() for _ in range(10)] 
 
 class Attack(Action):

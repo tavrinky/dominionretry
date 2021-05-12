@@ -3,15 +3,17 @@ from random import shuffle, choice
 from player import Player 
 from cards import * 
 from utils import random_string
-from log import PrintLog
+from log import * 
+
+from typing import Callable
 
 class Game(object):
-    def __init__(self, numplayers=2): 
-        players = [Player(str(i)) for i in range(numplayers)]
-        self.trash = [] 
-        self.supply = [] 
-        self.inPlay = [] 
-        self.playermanagers = [PlayerManager(player) for player in players] 
+    def __init__(self, numplayers: int =2): 
+        players: List[Player] = [Player(str(i)) for i in range(numplayers)]
+        self.trash: List[Card] = [] 
+        self.supply: List[Card] = [] 
+        self.inPlay: List[Card] = [] 
+        self.playermanagers: List[PlayerManager] = [PlayerManager(player) for player in players] 
         cardsInSupply = [ 
             Estate, 
             Duchy, 
@@ -23,14 +25,14 @@ class Game(object):
             Curse,
         ]
 
-        self.log = PrintLog() 
+        self.log: Log = PrintLog() 
         self.setupSupply(*cardsInSupply)
 
-        self.onPlayTreasureHandlers = [] 
+        self.onPlayTreasureHandlers: List[Callable] = [] 
         
         [pm.setup() for pm in self.playermanagers]   
-        self.turn = 0 
-        self.currentPlayer = [pm.player for pm in self.playermanagers][0]
+        self.turn: int = 0 
+        self.currentPlayer: Player = [pm.player for pm in self.playermanagers][0]
 
         
 

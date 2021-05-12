@@ -36,7 +36,7 @@ class Game(object):
 
         
 
-    def setupSupply(self, *cards):
+    def setupSupply(self, *cards: List[Type[Card]]):
         self.log.log("Setting up")
         numPlayers = len(self.playermanagers)
         for card in cards: 
@@ -49,7 +49,7 @@ class Game(object):
                 return p 
         raise AssertionError("Every player in the game should have a player manager")
 
-    def getSupplyByName(self, cardName: Type[Card]): 
+    def getSupplyByName(self, cardName): 
         for pile in self.supply: 
             if cardName() in pile: 
                 return pile 

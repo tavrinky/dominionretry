@@ -5,13 +5,13 @@ from cards import *
 from utils import random_string
 from log import * 
 
-from typing import Callable
+from typing import Callable, Optional, Type 
 
 class Game(object):
     def __init__(self, numplayers: int =2): 
         players: List[Player] = [Player(str(i)) for i in range(numplayers)]
         self.trash: List[Card] = [] 
-        self.supply: List[Card] = [] 
+        self.supply: List[List[Card]] = [] 
         self.inPlay: List[Card] = [] 
         self.playermanagers: List[PlayerManager] = [PlayerManager(player) for player in players] 
         cardsInSupply = [ 
@@ -49,7 +49,7 @@ class Game(object):
                 return p 
         raise AssertionError("Every player in the game should have a player manager")
 
-    def getSupplyByName(self, cardName): 
+    def getSupplyByName(self, cardName: Type[Card]): 
         for pile in self.supply: 
             if cardName() in pile: 
                 return pile 
@@ -70,17 +70,17 @@ class Game(object):
         self.cleanUp() 
         self.incrementPlayer() 
 
-    def isWon(self): 
+    def isWon(self) -> bool: 
         return self.threePiled() or self.provincesEmpty() 
 
-    def threePiled(self): 
+    def threePiled(self) -> bool: 
         numEmpty = 0 
         for pile in self.supply: 
             if not pile: 
                 numEmpty += 1 
         return numEmpty >= 3 
 
-    def provincesEmpty(self): 
+    def provincesEmpty(self) -> bool: 
         return not self.getSupplyByName(Province)
         
     def runActions(self): 
@@ -97,7 +97,7 @@ class Game(object):
                 break 
 
     def runBuys(self):
-        treasures = self.currentPlayer.playTreasures(viewGame(self), viewPM(self.currentPM))
+        treasures: List[Money] = self.currentPlayer.playTreasures(viewGame(self), viewPM(self.currentPM))
         for treasure in treasures:      
             if treasure in self.currentPM.hand and isinstance(treasure, Money): 
                 self.currentPM.hand.remove(treasure)  
@@ -108,7 +108,7 @@ class Game(object):
             else: 
                 raise ValueError("Bad and naughty player, playing treasures you don't have!\nHand: {self.currentPM.hand}, treasure: {treasure}")
         while self.currentPM.buys > 0: 
-            cardToBuy = self.currentPlayer.pickCardToBuy(viewGame(self), viewPM(self.currentPM)) 
+            cardToBuy: Optional[Card] = self.currentPlayer.pickCardToBuy(viewGame(self), viewPM(self.currentPM)) 
             if cardToBuy and cardToBuy.cost <= self.currentPM.money: 
                 self.currentPM.buys -= 1 
                 self.currentPM.money -= cardToBuy 
@@ -117,12 +117,12 @@ class Game(object):
                 break 
             else: 
                 raise ValueError("Tried to buy card that costs too much, money: {self.currentPM.money}, {cardToBuy}") 
-        self.onPlayTreasureHandlers = [] 
+        self.onPlayTreasureHandlers: List[Callable] = [] 
 
     def cleanUp(self): 
         self.currentPM.discardHand() 
         self.currentPM.discard.extend(self.inPlay) 
-        self.inPlay = [] 
+        self.inPlay: List[Card] = [] 
         self.currentPM.drawN(5) 
         assert(len(self.currentPM.hand) == 5 )
 

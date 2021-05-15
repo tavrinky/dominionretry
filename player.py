@@ -2,14 +2,14 @@
 from random import choice
 from cards import * 
 
-from typing import List, Optional, TYPE_CHECKING
-if TYPE_CHECKING: 
-    from game import * 
+from typing import List, Optional
+
+
 class Player(object): 
     def __init__(self, name: str): 
         self.name = name 
     
-    def pickAction(self, g: Game, pm : PlayerManager) -> Optional[Action]: 
+    def pickAction(self, g, pm ) -> Optional[Action]: 
         
         actions = list(filter(lambda x: isinstance(x, Action), pm.hand)) 
         if actions and pm.actions: 
@@ -17,11 +17,11 @@ class Player(object):
         else: 
             return None 
 
-    def playTreasures(self, g: Game, pm: PlayerManager) -> List[Money]: 
+    def playTreasures(self, g, pm) -> List[Money]: 
         treasures = list(filter(lambda x: isinstance(x, Money), pm.hand)) 
         return treasures 
 
-    def pickCardToBuy(self, g: Game, pm: PlayerManager) -> Optional[Card]: 
+    def pickCardToBuy(self, g, pm) -> Optional[Card]: 
         supplyCards = g.supply 
         supplyCardsByCost = [pile[0] for pile in supplyCards if pile] 
         # cursed 
@@ -33,30 +33,33 @@ class Player(object):
         else: 
             return None 
 
-    def chapel(self, g: Game, pm: PlayerManager) -> List[Card]: 
+    def chapel(self, g, pm) -> List[Card]: 
         return [x for x in pm.hand if isinstance(x, Estate)]
 
-    def cellar(self, g: Game, pm: PlayerManager) -> List[Card]: 
+    def cellar(self, g, pm) -> List[Card]: 
         return [x for x in pm.hand if isinstance(x, Victory)]
 
-    def harbinger(self, g: Game, pm: PlayerManager) -> Optional[Card]: 
+    def harbinger(self, g, pm) -> Optional[Card]: 
         if pm.discard: 
             return max(pm.discard, key=lambda x: x.cost) 
         else: 
             return None 
 
-    def vassal(self, g: Game, pm: PlayerManager, card: Card) -> bool: 
+    def vassal(self, g, pm, card: Card) -> bool: 
         return True 
 
-    def workshop(self, g: Game, pm: PlayerManager) -> Card: 
+    def workshop(self, g, pm) -> Card: 
         return Silver() 
 
-    def revealed(self, g: Game, cards: List[Card], message: str): 
+    def revealed(self, g, cards: List[Card], message: str): 
         pass 
 
-    def respondToBureaucrat(self, g: Game, pm: PlayerManager, cards: List[Card]) -> Optional[Card]: 
+    def respondToBureaucrat(self, g, pm, cards: List[Card]) -> Optional[Card]: 
         if cards: 
             return cards[0] 
         #gnashes my teeth while reciting the zen of python 
+        return None 
+
+    def scheme(self, g, pm) -> Optional[Card]: 
         return None 
         

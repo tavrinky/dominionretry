@@ -207,6 +207,29 @@ class Bureaucrat(Attack):
                     g.reveal(pm.hands[:], str(pm.player.name))
 
 
+class Scheme(Action): 
+    def __init__(self): 
+        super().__init__(3)
+
+    def run(self, g): 
+        def schemeHandler(g, pm): 
+            card = pm.currentPM.player.scheme(g.viewGame(), pm.viewPlayer)
+            if card: 
+                g.deck.insert(0, card)
+                g.inPlay.remove(card) 
+            else: 
+                pass 
+        g.attachCleanupHandler(schemeHandler)
+        g.currentPM.draw() 
+        g.currentPM.actions += 1 
+
+class TorturerChampion(Action):
+    def __init__(self):
+        raise NotImplementedError()
+
+    def run(self, g):
+        g.currentPM.actions+=1 
+        g.currentPM.drawN(3) 
 
 
 class Curse(Card): 

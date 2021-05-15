@@ -33,6 +33,7 @@ class Game(object):
         [pm.setup() for pm in self.playermanagers]   
         self.turn: int = 0 
         self.currentPlayer: Player = [pm.player for pm in self.playermanagers][0]
+        self.onCleanupHandlers = [] 
 
         
 
@@ -121,6 +122,8 @@ class Game(object):
 
     def cleanUp(self): 
         self.currentPM.discardHand() 
+        for handler in self.onCleanupHandlers: 
+            handler(self, self.currentPM)
         self.currentPM.discard.extend(self.inPlay) 
         self.inPlay: List[Card] = [] 
         self.currentPM.drawN(5) 
@@ -154,6 +157,9 @@ class Game(object):
     def reveal(self, cards, message): 
         for player in map(lambda pm: pm.player, self.playermanagers): 
             player.revealed(self.viewGame(), cards, message)
+
+    def attachCleanupHandler(self, handler): 
+        self.onCleanupHandlers.append(handler) 
         
             
         

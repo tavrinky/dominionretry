@@ -225,7 +225,7 @@ class Scheme(Action):
 
 class TorturerChampion(Action):
     def __init__(self):
-        raise NotImplementedError()
+        super().__init__(0)
 
     def run(self, g):
         g.currentPM.actions+=1 
